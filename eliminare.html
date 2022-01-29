@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            border-spacing: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 16px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2
+        }
+    </style>
+
+    <script>
+        function chiediLibri() {
+
+            var xmlhttp = new XMLHttpRequest();
+            var url = "http://localhost:5000/tuttiilibri";
+
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var myArr = JSON.parse(this.responseText);
+
+                    creaTabella(myArr)
+                }
+            };
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+        }
+
+        function creaTabella(dati) {
+            //var out = "<thead><tr><td><input type='button' style='width:100%; height:100%;' value='nome' onclick='sort(`nome`)'/></td><td><input type='button' style='width:100%; height:100%;' value='autore' onclick='sort(`autore`)'/></td><td><input type='button' style='width:100%; height:100%;' value='anno di pubblicazione' onclick='sort(`annoPubblicazione`)'/></td><td><input type='button' style='width:100%; height:100%;' value='casa editrice' onclick='sort(`casaEditrice`)'/></td><td><input type='button' style='width:100%; height:100%;' value='numero di pagine' onclick='sort(`numeroPagine`)'/></td><td><input type='button' style='width:100%; height:100%;' value='collana' onclick='sort(`collana`)'/></td></tr></thead>";
+            var out = "<thead><tr><th>nome</th><th>autore</th><th>anno di pubblicazione</th><th>casa editrice</th><th>numero di pagine</th><th>collana</th></tr></thead><tbody>";
+            for (let i = 0; i < dati.length; i++) {
+                out = `${out} <tr><td >${dati[i]["titolo"]}</td><td">${dati[i]["autore"]}</td><td 3">${dati[i]["annoPubblicazione"]}</td><td>${dati[i]["casaEditrice"]}</td><td>${dati[i]["numeroPagine"]}</td><td>${dati[i]["collana"]}</td></tr>`
+
+            }
+            out = `${out}</tbody>`
+            document.getElementsByTagName("table")[0].innerHTML = out;
+        }
+    </script>
+    <script>
+        function myFunction() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("inputCerca");
+            filter = input.value.toUpperCase();
+            table = document.getElementsByTagName("table")[0];
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[document.getElementById("selectCampo").selectedIndex];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+
+    </script>
+
+
+</head>
+
+<body onload="chiediLibri()">
+
+    <input type="text" id="inputCerca" onkeyup="myFunction()" placeholder="cerca">
+    <select name="campi" id="selectCampo" onchange="myFunction()">
+        <option value="0">nome</option>
+        <option value="1">autore</option>
+        <option value="2">anno di pubblicazione</option>
+        <option value="3">casa editrice</option>
+        <option value="4">numero di pagine</option>
+        <option value="5">collana</option>
+    </select>
+    <table></table>
+</body>
+
+</html>
